@@ -1,0 +1,24 @@
+name = "ayni-api"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[routes]]
+pattern = "api.ayni.estebanfa.es"
+custom_domain = true
+
+[triggers]
+crons = ["0 8 * * *", "0 20 * * *"]  # Notificaciones a las 8h y 20h
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ayni-db"
+database_id = "1d059acf-2f51-4f03-84c9-16b12d011f48"
+
+[vars]
+FRONTEND_URL = "https://ayni.estebanfa.es"
+VAPID_PUBLIC_KEY = "BNHhMAOS4esib1QMhUMvid4ab4UmbFnaI1BEIwWIagyZKXNT_M5S78N4QC7lnLePkdtA93yg2wT779_vWjgMk8I"
+VAPID_SUBJECT = "mailto:estebanfa305@gmail.com"
+
+# Secrets managed via `wrangler secret`:
+# VAPID_PRIVATE_KEY, JWT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET

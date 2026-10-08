@@ -1,0 +1,24 @@
+{
+  "name": "flatmate-backend",
+  "version": "1.0.0",
+  "description": "FlatMate API - Cloudflare Workers + Hono",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create flatmate-db",
+    "db:migrate": "wrangler d1 execute flatmate-db --file=./schema.sql",
+    "db:migrate:prod": "wrangler d1 execute flatmate-db --remote --file=./schema.sql",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.88.0"
+  }
+}
