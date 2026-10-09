@@ -35,7 +35,7 @@ app.get('/', (c) => c.json({
 
 // Routes
 app.route('/auth', authRoutes);
-app.route('/api', groupRoutes);
+app.route('/api/groups', groupRoutes);
 app.route('/api', expenseRoutes);
 app.route('/api', noteRoutes);
 app.route('/api', taskRoutes);
