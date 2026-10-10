@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useToastStore } from '../store';
 
 export function Toast() {
@@ -36,27 +37,80 @@ export function PageLoading() {
   );
 }
 
-export function Avatar({ user, size = 'default' }) {
+export function Avatar({ user, size = 'default', className = '' }) {
+  const [hasError, setHasError] = useState(false);
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
     : '?';
 
   const sizeClass = size === 'sm' ? 'avatar-sm' : size === 'lg' ? 'avatar-lg' : size === 'xl' ? 'avatar-xl' : '';
 
-  if (user?.avatar_url) {
+  if (user?.avatar_url && !hasError) {
     return (
       <img
         src={user.avatar_url}
         alt={user.name}
-        className={`avatar ${sizeClass}`}
-        onError={e => { e.target.style.display = 'none'; }}
+        className={`avatar ${sizeClass} ${className}`}
+        onError={() => setHasError(true)}
       />
     );
   }
 
   return (
-    <div className={`avatar ${sizeClass}`} title={user?.name}>
+    <div className={`avatar ${sizeClass} ${className}`} title={user?.name}>
       {initials}
+    </div>
+  );
+}
+
+export function GroupAvatar({ group, size = 'md', className = '', style = {} }) {
+  const [hasError, setHasError] = useState(false);
+  const sizeMap = {
+    sm: { size: 36, fontSize: '1.2rem', radius: 'var(--radius-sm)' },
+    md: { size: 52, fontSize: '1.6rem', radius: 'var(--radius-md)' },
+    lg: { size: 68, fontSize: '2rem', radius: 'var(--radius-lg)' },
+    xl: { size: 88, fontSize: '2.5rem', radius: 'var(--radius-xl)' },
+  };
+  const { size: dim, fontSize, radius } = sizeMap[size] || sizeMap.md;
+
+  if (group?.image_url && !hasError) {
+    return (
+      <img
+        src={group.image_url}
+        alt={group.name}
+        className={`group-avatar ${className}`}
+        onError={() => setHasError(true)}
+        style={{
+          width: dim,
+          height: dim,
+          borderRadius: radius,
+          objectFit: 'cover',
+          border: '1px solid var(--border)',
+          flexShrink: 0,
+          ...style,
+        }}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`group-avatar ${className}`}
+      style={{
+        width: dim,
+        height: dim,
+        borderRadius: radius,
+        background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))',
+        border: '1px solid var(--border)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize,
+        flexShrink: 0,
+        ...style,
+      }}
+    >
+      {group?.emoji || '🏠'}
     </div>
   );
 }

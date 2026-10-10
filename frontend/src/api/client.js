@@ -32,6 +32,7 @@ export const api = {
   // Auth
   auth: {
     me: () => request('/auth/me'),
+    updateProfile: (data) => request('/auth/me', { method: 'PUT', body: JSON.stringify(data) }),
     logout: () => request('/auth/logout', { method: 'POST' }),
     googleUrl: () => `${API_BASE}/auth/google`,
   },

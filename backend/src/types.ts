@@ -4,6 +4,9 @@ export interface Env {
   JWT_SECRET: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_PRIVATE_KEY?: string;
+  VAPID_SUBJECT?: string;
 }
 
 export interface User {
@@ -21,6 +24,7 @@ export interface Group {
   name: string;
   description: string | null;
   emoji: string;
+  image_url: string | null;
   currency: string;
   invite_code: string;
   created_by: string;

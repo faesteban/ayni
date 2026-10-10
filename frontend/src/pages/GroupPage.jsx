@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGroupStore, useAuthStore, useToastStore } from '../store';
-import { Avatar, Spinner, EmptyState, Modal, ConfirmModal } from '../components/common';
+import { Avatar, GroupAvatar, Spinner, EmptyState, Modal, ConfirmModal } from '../components/common';
+import { EditGroupModal } from '../components/EditGroupModal';
 
 export function GroupPage() {
   const { groupId } = useParams();
@@ -10,6 +11,7 @@ export function GroupPage() {
   const { user } = useAuthStore();
   const toast = useToastStore();
   const [loading, setLoading] = useState(true);
+  const [showEdit, setShowEdit] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deletingGroup, setDeletingGroup] = useState(false);
@@ -98,14 +100,18 @@ export function GroupPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
         <button className="btn btn-ghost btn-icon" onClick={() => navigate('/')}>‹</button>
-        <div style={{ flex: 1 }}>
-          <h2 style={{ marginBottom: 2 }}>{group.emoji} {group.name}</h2>
+        <GroupAvatar group={group} size="md" />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h2 style={{ marginBottom: 2 }} className="truncate">{group.name}</h2>
           {group.description && (
-            <p style={{ fontSize: '0.85rem', margin: 0 }}>{group.description}</p>
+            <p style={{ fontSize: '0.85rem', margin: 0, color: 'var(--text-secondary)' }} className="truncate">{group.description}</p>
           )}
         </div>
         {myRole === 'admin' && (
-          <button className="btn btn-ghost btn-icon" onClick={() => setShowDelete(true)}>🗑️</button>
+          <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+            <button className="btn btn-ghost btn-icon" title="Editar grupo y foto" onClick={() => setShowEdit(true)}>⚙️</button>
+            <button className="btn btn-ghost btn-icon" title="Eliminar grupo" onClick={() => setShowDelete(true)}>🗑️</button>
+          </div>
         )}
       </div>
 
@@ -150,11 +156,7 @@ export function GroupPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           {members.map(member => (
             <div key={member.user_id} className="glass-card" style={{ padding: 'var(--space-3) var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-              {member.avatar_url ? (
-                <img src={member.avatar_url} alt={member.name} className="avatar" style={{ width: 36, height: 36, borderRadius: '50%' }} />
-              ) : (
-                <div className="avatar">{member.name?.[0]?.toUpperCase()}</div>
-              )}
+              <Avatar user={{ name: member.name, avatar_url: member.avatar_url }} size="default" />
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
                   {member.name}
@@ -220,6 +222,13 @@ export function GroupPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Edit Group Modal */}
+      <EditGroupModal
+        open={showEdit}
+        onClose={() => setShowEdit(false)}
+        group={group}
+      />
 
       {/* Delete confirm */}
       <ConfirmModal

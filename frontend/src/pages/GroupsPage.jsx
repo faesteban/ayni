@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGroupStore, useAuthStore, useToastStore } from '../store';
-import { Avatar, EmptyState, Modal, Spinner, ConfirmModal } from '../components/common';
+import { Avatar, GroupAvatar, EmptyState, Modal, Spinner, ConfirmModal } from '../components/common';
+import { ImagePicker } from '../components/ImagePicker';
+import { ProfileModal } from '../components/ProfileModal';
 import { requestNotificationPermission } from '../hooks/useNotifications';
 
 const EMOJIS = ['🏠', '🏖️', '🎉', '🏢', '⚽', '🎸', '🍕', '🏕️', '💼', '❤️', '🎓', '🌍'];
@@ -9,7 +11,7 @@ const EMOJIS = ['🏠', '🏖️', '🎉', '🏢', '⚽', '🎸', '🍕', '🏕�
 function CreateGroupModal({ open, onClose }) {
   const { createGroup } = useGroupStore();
   const toast = useToastStore();
-  const [form, setForm] = useState({ name: '', description: '', emoji: '🏠', currency: 'EUR' });
+  const [form, setForm] = useState({ name: '', description: '', emoji: '🏠', image_url: null, currency: 'EUR' });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -20,7 +22,7 @@ function CreateGroupModal({ open, onClose }) {
       await createGroup(form);
       toast.success('¡Grupo creado!');
       onClose();
-      setForm({ name: '', description: '', emoji: '🏠', currency: 'EUR' });
+      setForm({ name: '', description: '', emoji: '🏠', image_url: null, currency: 'EUR' });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -32,8 +34,20 @@ function CreateGroupModal({ open, onClose }) {
     <Modal open={open} onClose={onClose} title="Crear grupo">
       <form onSubmit={handleSubmit}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <ImagePicker
+            value={form.image_url}
+            onChange={(url) => setForm(f => ({ ...f, image_url: url }))}
+            fallback={form.emoji}
+            shape="square"
+            size={80}
+            label="Foto del grupo (opcional)"
+            hint="Personaliza el grupo con una foto o elige un emoji abajo."
+          />
+
           <div className="form-group">
-            <label className="form-label">Emoji del grupo</label>
+            <label className="form-label">
+              Emoji {form.image_url ? '(icono alternativo)' : ''}
+            </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
               {EMOJIS.map(emoji => (
                 <button
@@ -41,7 +55,7 @@ function CreateGroupModal({ open, onClose }) {
                   type="button"
                   onClick={() => setForm(f => ({ ...f, emoji }))}
                   style={{
-                    fontSize: '1.5rem',
+                    fontSize: '1.4rem',
                     padding: 'var(--space-2)',
                     borderRadius: 'var(--radius-sm)',
                     background: form.emoji === emoji ? 'var(--primary-glow)' : 'var(--bg-elevated)',
@@ -158,6 +172,7 @@ export function GroupsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [notifState, setNotifState] = useState(Notification?.permission || 'default');
 
   useEffect(() => {
@@ -194,11 +209,18 @@ export function GroupsPage() {
               minWidth: 180,
               zIndex: 100,
               overflow: 'hidden',
+              boxShadow: 'var(--shadow-md)',
             }}>
               <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--border)' }}>
                 <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user?.name}</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user?.email}</div>
               </div>
+              <button
+                onClick={() => { setShowProfile(true); setShowMenu(false); }}
+                style={{ width: '100%', padding: 'var(--space-3) var(--space-4)', textAlign: 'left', color: 'var(--primary-light)', fontSize: '0.9rem', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                👤 Mi perfil y foto
+              </button>
               {notifState !== 'granted' && (
                 <button
                   onClick={() => { handleEnableNotifications(); setShowMenu(false); }}
@@ -281,15 +303,7 @@ export function GroupsPage() {
               onClick={() => navigate(`/groups/${group.id}`)}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                <div style={{
-                  width: 52, height: 52, borderRadius: 'var(--radius-md)',
-                  background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))',
-                  border: '1px solid var(--border)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.6rem', flexShrink: 0,
-                }}>
-                  {group.emoji}
-                </div>
+                <GroupAvatar group={group} size="md" />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: '1rem' }} className="truncate">{group.name}</div>
                   {group.description && (
@@ -310,6 +324,7 @@ export function GroupsPage() {
 
       <CreateGroupModal open={showCreate} onClose={() => setShowCreate(false)} />
       <JoinGroupModal open={showJoin} onClose={() => setShowJoin(false)} />
+      <ProfileModal open={showProfile} onClose={() => setShowProfile(false)} />
     </div>
   );
 }

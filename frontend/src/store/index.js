@@ -23,6 +23,12 @@ export const useAuthStore = create((set, get) => ({
 
   setUser: (user) => set({ user }),
 
+  updateProfile: async (data) => {
+    const { user } = await api.auth.updateProfile(data);
+    set({ user });
+    return user;
+  },
+
   logout: async () => {
     try { await api.auth.logout(); } catch {}
     localStorage.removeItem('flatmate_session');

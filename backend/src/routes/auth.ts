@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { Env, User } from '../types';
-import { createSession, generateId } from '../middleware/auth';
+import { createSession, generateId, getAuthUser } from '../middleware/auth';
 
 const auth = new Hono<{ Bindings: Env }>();
 
@@ -113,6 +113,37 @@ auth.get('/me', async (c) => {
 
   if (!user) return c.json({ error: 'User not found' }, 404);
   return c.json({ user });
+});
+
+// Update current user profile
+auth.put('/me', async (c) => {
+  const user = await getAuthUser(c);
+  if (!user) return c.json({ error: 'Unauthorized' }, 401);
+
+  const body = await c.req.json<{ name?: string; avatar_url?: string | null }>();
+  const updates: string[] = [];
+  const values: unknown[] = [];
+
+  if (body.name !== undefined && body.name.trim()) {
+    updates.push('name = ?');
+    values.push(body.name.trim());
+  }
+
+  if (body.avatar_url !== undefined) {
+    updates.push('avatar_url = ?');
+    values.push(body.avatar_url);
+  }
+
+  if (updates.length > 0) {
+    values.push(user.id);
+    await c.env.DB.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).bind(...values).run();
+  }
+
+  const updatedUser = await c.env.DB.prepare(
+    'SELECT id, email, name, avatar_url, created_at FROM users WHERE id = ?'
+  ).bind(user.id).first<User>();
+
+  return c.json({ user: updatedUser });
 });
 
 // Logout

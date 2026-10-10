@@ -497,7 +497,7 @@ export function ExpensesPage() {
                       borderColor: debt.from.id === user?.id ? 'rgba(255,107,107,0.2)' : 'var(--border)',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                        <div className="avatar avatar-sm">{debt.from.name?.[0]}</div>
+                        <Avatar user={debt.from} size="sm" />
                         <div style={{ flex: 1 }}>
                           <span style={{ fontWeight: 600 }}>{debt.from.id === user?.id ? 'Tú' : debt.from.name}</span>
                           <span style={{ color: 'var(--text-muted)', margin: '0 var(--space-2)' }}>→</span>

@@ -26,7 +26,7 @@ groups.post('/', async (c) => {
   const user = await getAuthUser(c);
   if (!user) return c.json({ error: 'Unauthorized' }, 401);
 
-  const body = await c.req.json<{ name: string; description?: string; emoji?: string; currency?: string }>();
+  const body = await c.req.json<{ name: string; description?: string; emoji?: string; currency?: string; image_url?: string | null }>();
   if (!body.name?.trim()) return c.json({ error: 'Group name is required' }, 400);
 
   const id = generateId();
@@ -34,8 +34,8 @@ groups.post('/', async (c) => {
 
   await c.env.DB.batch([
     c.env.DB.prepare(
-      'INSERT INTO groups (id, name, description, emoji, currency, invite_code, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    ).bind(id, body.name.trim(), body.description || null, body.emoji || '🏠', body.currency || 'EUR', inviteCode, user.id),
+      'INSERT INTO groups (id, name, description, emoji, image_url, currency, invite_code, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(id, body.name.trim(), body.description || null, body.emoji || '🏠', body.image_url || null, body.currency || 'EUR', inviteCode, user.id),
     c.env.DB.prepare(
       'INSERT INTO group_members (group_id, user_id, role) VALUES (?, ?, ?)'
     ).bind(id, user.id, 'admin'),
@@ -84,13 +84,14 @@ groups.put('/:id', async (c) => {
   ).bind(groupId, user.id, 'admin').first<GroupMember>();
   if (!member) return c.json({ error: 'Not authorized to edit this group' }, 403);
 
-  const body = await c.req.json<{ name?: string; description?: string; emoji?: string; currency?: string }>();
+  const body = await c.req.json<{ name?: string; description?: string; emoji?: string; currency?: string; image_url?: string | null }>();
   const updates: string[] = [];
   const values: unknown[] = [];
 
   if (body.name) { updates.push('name = ?'); values.push(body.name); }
   if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
   if (body.emoji) { updates.push('emoji = ?'); values.push(body.emoji); }
+  if (body.image_url !== undefined) { updates.push('image_url = ?'); values.push(body.image_url); }
   if (body.currency) { updates.push('currency = ?'); values.push(body.currency); }
 
   if (updates.length === 0) return c.json({ error: 'Nothing to update' }, 400);

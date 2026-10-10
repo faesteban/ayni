@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTaskStore, useGroupStore, useAuthStore, useToastStore } from '../store';
-import { EmptyState, Spinner, Modal, ConfirmModal, formatDate } from '../components/common';
+import { EmptyState, Spinner, Modal, ConfirmModal, formatDate, Avatar } from '../components/common';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pendiente', icon: '⏳', color: 'var(--text-muted)' },
@@ -231,8 +231,9 @@ function TaskCard({ task, groupId, members, currentUser, onEdit, onDelete }) {
 
               {/* Assignee */}
               {assignee && (
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                  👤 {assignee.user_id === currentUser?.id ? 'Tú' : assignee.name}
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  <Avatar user={{ name: assignee.name, avatar_url: assignee.avatar_url }} size="sm" />
+                  {assignee.user_id === currentUser?.id ? 'Tú' : assignee.name}
                 </span>
               )}
 

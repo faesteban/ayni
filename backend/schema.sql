@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS groups (
   name TEXT NOT NULL,
   description TEXT,
   emoji TEXT DEFAULT '🏠',
+  image_url TEXT,
   currency TEXT DEFAULT 'EUR',
   invite_code TEXT UNIQUE NOT NULL DEFAULT (lower(hex(randomblob(4)))),
   created_by TEXT NOT NULL REFERENCES users(id),
