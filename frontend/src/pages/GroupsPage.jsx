@@ -4,6 +4,7 @@ import { useGroupStore, useAuthStore, useToastStore } from '../store';
 import { Avatar, GroupAvatar, EmptyState, Modal, Spinner, ConfirmModal } from '../components/common';
 import { ImagePicker } from '../components/ImagePicker';
 import { ProfileModal } from '../components/ProfileModal';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { requestNotificationPermission } from '../hooks/useNotifications';
 
 const EMOJIS = ['🏠', '🏖️', '🎉', '🏢', '⚽', '🎸', '🍕', '🏕️', '💼', '❤️', '🎓', '🌍'];
@@ -196,7 +197,8 @@ export function GroupsPage() {
           </h1>
           <p style={{ fontSize: '0.9rem', marginTop: 2 }}>Hola, {user?.name?.split(' ')[0]} 👋</p>
         </div>
-        <div style={{ display: 'flex', gap: 'var(--space-2)', position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', position: 'relative' }}>
+          <ThemeToggle />
           <button className="btn btn-ghost btn-icon" onClick={() => setShowMenu(!showMenu)}>
             <Avatar user={user} size="sm" />
           </button>
@@ -206,7 +208,7 @@ export function GroupsPage() {
               background: 'var(--bg-elevated)',
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius-md)',
-              minWidth: 180,
+              minWidth: 190,
               zIndex: 100,
               overflow: 'hidden',
               boxShadow: 'var(--shadow-md)',
@@ -221,6 +223,9 @@ export function GroupsPage() {
               >
                 👤 Mi perfil y foto
               </button>
+              <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+                <ThemeToggle showLabel style={{ width: '100%', padding: 'var(--space-3) var(--space-4)', border: 'none', background: 'none', color: 'var(--text-primary)', borderRadius: 0 }} />
+              </div>
               {notifState !== 'granted' && (
                 <button
                   onClick={() => { handleEnableNotifications(); setShowMenu(false); }}

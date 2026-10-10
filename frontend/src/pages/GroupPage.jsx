@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useGroupStore, useAuthStore, useToastStore } from '../store';
 import { Avatar, GroupAvatar, Spinner, EmptyState, Modal, ConfirmModal } from '../components/common';
 import { EditGroupModal } from '../components/EditGroupModal';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export function GroupPage() {
   const { groupId } = useParams();
@@ -107,12 +108,15 @@ export function GroupPage() {
             <p style={{ fontSize: '0.85rem', margin: 0, color: 'var(--text-secondary)' }} className="truncate">{group.description}</p>
           )}
         </div>
-        {myRole === 'admin' && (
-          <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-            <button className="btn btn-ghost btn-icon" title="Editar grupo y foto" onClick={() => setShowEdit(true)}>⚙️</button>
-            <button className="btn btn-ghost btn-icon" title="Eliminar grupo" onClick={() => setShowDelete(true)}>🗑️</button>
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+          <ThemeToggle />
+          {myRole === 'admin' && (
+            <>
+              <button className="btn btn-ghost btn-icon" title="Editar grupo y foto" onClick={() => setShowEdit(true)}>⚙️</button>
+              <button className="btn btn-ghost btn-icon" title="Eliminar grupo" onClick={() => setShowDelete(true)}>🗑️</button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Module cards */}

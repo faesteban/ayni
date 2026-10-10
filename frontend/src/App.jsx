@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useAuthStore } from './store';
+import { useAuthStore, useThemeStore } from './store';
 import { Toast, PageLoading } from './components/common';
 import { BottomNav } from './components/BottomNav';
 
@@ -31,8 +31,10 @@ function AppLayout({ children }) {
 
 export default function App() {
   const { init, loading } = useAuthStore();
+  const { initTheme } = useThemeStore();
 
   useEffect(() => {
+    initTheme();
     init();
   }, []);
 

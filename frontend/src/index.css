@@ -76,6 +76,74 @@
   --bottomnav-height: 64px;
 }
 
+/* ---- Light Theme ---- */
+[data-theme="light"] {
+  /* Colors */
+  --bg-base: #f4f5fa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #eaedf7;
+  --bg-hover: #e0e4f2;
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-glass-hover: rgba(255, 255, 255, 0.95);
+
+  /* Brand */
+  --primary: #635bff;
+  --primary-light: #7a73ff;
+  --primary-dark: #4d44e5;
+  --primary-glow: rgba(99, 91, 255, 0.22);
+
+  /* Accents */
+  --accent-green: #059669;
+  --accent-red: #e11d48;
+  --accent-orange: #d97706;
+  --accent-blue: #2563eb;
+  --accent-pink: #db2777;
+
+  /* Text */
+  --text-primary: #151628;
+  --text-secondary: #535770;
+  --text-muted: #8589a3;
+  --text-inverse: #ffffff;
+
+  /* Borders */
+  --border: rgba(21, 22, 40, 0.09);
+  --border-focus: rgba(99, 91, 255, 0.45);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(21, 22, 40, 0.04);
+  --shadow-md: 0 6px 20px rgba(21, 22, 40, 0.07);
+  --shadow-lg: 0 12px 36px rgba(21, 22, 40, 0.1);
+  --shadow-glow: 0 0 25px var(--primary-glow);
+}
+
+[data-theme="light"] .modal {
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(21, 22, 40, 0.15);
+}
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(15, 17, 30, 0.45);
+}
+
+[data-theme="light"] .card,
+[data-theme="light"] .glass-card {
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme="light"] .card:hover,
+[data-theme="light"] .glass-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(99, 91, 255, 0.35);
+}
+
+[data-theme="light"] .btn-ghost {
+  background: rgba(21, 22, 40, 0.04);
+}
+
+[data-theme="light"] .btn-ghost:hover:not(:disabled) {
+  background: rgba(21, 22, 40, 0.08);
+}
+
 /* ---- Reset & Base ---- */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -98,6 +166,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 #root {

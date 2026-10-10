@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useNoteStore, useGroupStore, useToastStore } from '../store';
 import { EmptyState, Spinner, ConfirmModal, formatRelativeTime } from '../components/common';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const NOTE_COLORS = [
   { value: '#1e1e2e', label: 'Default' },
@@ -97,9 +98,10 @@ function NoteCard({ note, onUpdate, onDelete, onPin }) {
     <>
       <div
         style={{
-          background: note.color || '#1e1e2e',
-          border: `1px solid ${note.pinned ? 'rgba(108,99,255,0.5)' : 'rgba(255,255,255,0.1)'}`,
+          background: (!note.color || note.color === '#1e1e2e') ? 'var(--bg-surface)' : note.color,
+          border: `1px solid ${note.pinned ? 'var(--primary)' : 'var(--border)'}`,
           borderRadius: 'var(--radius-lg)',
+          boxShadow: 'var(--shadow-sm)',
           padding: 'var(--space-4)',
           position: 'relative',
           cursor: editing ? 'default' : 'pointer',
@@ -339,7 +341,8 @@ export function NotesPage() {
     <div className="page">
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
         <button className="btn btn-ghost btn-icon" onClick={() => navigate(`/groups/${groupId}`)}>‹</button>
-        <h2>📝 Notas</h2>
+        <h2 style={{ flex: 1 }}>📝 Notas</h2>
+        <ThemeToggle />
       </div>
 
       {/* New note input at top */}

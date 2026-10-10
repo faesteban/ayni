@@ -274,3 +274,34 @@ export const useToastStore = create((set, get) => ({
   success: (msg) => get().show(msg, 'success'),
   error: (msg) => get().show(msg, 'error'),
 }));
+
+// ---- Theme Store ----
+function getInitialTheme() {
+  const saved = localStorage.getItem('ayni_theme');
+  if (saved === 'light' || saved === 'dark') return saved;
+  if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  }
+  return 'dark';
+}
+
+export const useThemeStore = create((set, get) => ({
+  theme: getInitialTheme(),
+
+  setTheme: (theme) => {
+    localStorage.setItem('ayni_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    set({ theme });
+  },
+
+  toggleTheme: () => {
+    const next = get().theme === 'dark' ? 'light' : 'dark';
+    get().setTheme(next);
+  },
+
+  initTheme: () => {
+    const current = get().theme;
+    document.documentElement.setAttribute('data-theme', current);
+  },
+}));
+

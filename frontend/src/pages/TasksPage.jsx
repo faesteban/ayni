@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTaskStore, useGroupStore, useAuthStore, useToastStore } from '../store';
 import { EmptyState, Spinner, Modal, ConfirmModal, formatDate, Avatar } from '../components/common';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pendiente', icon: '⏳', color: 'var(--text-muted)' },
@@ -319,6 +320,7 @@ export function TasksPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
         <button className="btn btn-ghost btn-icon" onClick={() => navigate(`/groups/${groupId}`)}>‹</button>
         <h2 style={{ flex: 1 }}>✅ Tareas</h2>
+        <ThemeToggle />
         <button className="btn btn-primary btn-sm" onClick={() => setShowCreate(true)}>+ Nueva</button>
       </div>
 

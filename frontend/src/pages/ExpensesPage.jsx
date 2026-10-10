@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useExpenseStore, useGroupStore, useAuthStore, useToastStore } from '../store';
 import { Avatar, EmptyState, Modal, ConfirmModal, Spinner, formatCurrency, formatDate } from '../components/common';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 const CATEGORIES = [
   { value: 'general', label: '🛍️ General' },
@@ -348,6 +349,7 @@ export function ExpensesPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
         <button className="btn btn-ghost btn-icon" onClick={() => navigate(`/groups/${groupId}`)}>‹</button>
         <h2 style={{ flex: 1 }}>💰 Gastos</h2>
+        <ThemeToggle />
         <button className="btn btn-primary btn-sm" onClick={() => setShowAdd(true)}>+ Añadir</button>
       </div>
 

@@ -1,4 +1,5 @@
 import { api } from '../api/client';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export function LoginPage() {
   const handleGoogleLogin = () => {
@@ -13,8 +14,12 @@ export function LoginPage() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: 'var(--space-6)',
-      background: 'radial-gradient(ellipse at top, #1a1040 0%, var(--bg-base) 70%)',
+      position: 'relative',
+      background: 'radial-gradient(ellipse at top, rgba(108, 99, 255, 0.18) 0%, var(--bg-base) 70%)',
     }}>
+      <div style={{ position: 'absolute', top: 'var(--space-4)', right: 'var(--space-4)' }}>
+        <ThemeToggle />
+      </div>
       {/* Logo */}
       <div className="animate-slide-up" style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
         <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🤝</div>
