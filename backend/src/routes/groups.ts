@@ -142,6 +142,57 @@ groups.post('/join', async (c) => {
   return c.json({ success: true, group }, 201);
 });
 
+// Invite by email (creates pending user)
+groups.post('/:id/invite/email', async (c) => {
+  const user = await getAuthUser(c);
+  if (!user) return c.json({ error: 'Unauthorized' }, 401);
+
+  const groupId = c.req.param('id');
+  const body = await c.req.json<{ email: string }>();
+  if (!body.email) return c.json({ error: 'Email required' }, 400);
+  
+  const email = body.email.toLowerCase().trim();
+
+  // Check if admin
+  const isAdmin = await c.env.DB.prepare(
+    'SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ? AND role = ?'
+  ).bind(groupId, user.id, 'admin').first();
+  if (!isAdmin) return c.json({ error: 'Only admins can invite' }, 403);
+
+  // Check if user exists (any provider)
+  let invitee = await c.env.DB.prepare(
+    'SELECT * FROM users WHERE email = ?'
+  ).bind(email).first<User>();
+
+  if (!invitee) {
+    // Create pending user
+    const newId = generateId();
+    await c.env.DB.prepare(
+      'INSERT INTO users (id, email, name, avatar_url, provider, provider_id) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(newId, email, email.split('@')[0], null, 'pending', email).run();
+    
+    invitee = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(newId).first<User>();
+  }
+
+  // Check membership
+  const existingMember = await c.env.DB.prepare(
+    'SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?'
+  ).bind(groupId, invitee!.id).first();
+  
+  if (existingMember) {
+    return c.json({ error: 'User is already in the group' }, 400);
+  }
+
+  // Add to group
+  await c.env.DB.prepare(
+    'INSERT INTO group_members (group_id, user_id, role) VALUES (?, ?, ?)'
+  ).bind(groupId, invitee!.id, 'member').run();
+
+  // Here you would ideally send an email to the user with a link to join
+
+  return c.json({ success: true, user: invitee }, 201);
+});
+
 // Leave group
 groups.post('/:id/leave', async (c) => {
   const user = await getAuthUser(c);

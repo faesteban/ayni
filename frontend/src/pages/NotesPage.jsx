@@ -17,6 +17,57 @@ const NOTE_COLORS_DISPLAY = [
   '#1e1e2e', '#1f3320', '#2d1515', '#0f1d3d', '#2d2800', '#2a1040', '#0d2b2b',
 ];
 
+function NoteContentDisplay({ note, onUpdate }) {
+  const content = note.content || '';
+  if (!content) return <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Nota vacía</span>;
+
+  const lines = content.split('\n');
+  
+  const handleToggle = (index, currentChecked) => {
+    const newLines = [...lines];
+    const line = newLines[index];
+    if (currentChecked) {
+      newLines[index] = line.replace(/-\s+\[[xX]\]/, '- [ ]');
+    } else {
+      newLines[index] = line.replace(/-\s+\[\s\]/, '- [x]');
+    }
+    onUpdate(note.id, { content: newLines.join('\n') });
+  };
+
+  return (
+    <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, wordBreak: 'break-word' }}>
+      {lines.map((line, i) => {
+        const trimmed = line.trimStart();
+        const isUnchecked = trimmed.startsWith('- [ ]');
+        const isChecked = trimmed.startsWith('- [x]') || trimmed.startsWith('- [X]');
+        
+        if (isUnchecked || isChecked) {
+          const text = line.replace(/^\s*-\s+\[[ xX]\]\s*/, '');
+          return (
+            <div 
+              key={i} 
+              style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)', marginTop: 2, marginBottom: 2 }} 
+              onClick={(e) => { e.stopPropagation(); handleToggle(i, isChecked); }}
+            >
+              <input 
+                type="checkbox" 
+                checked={isChecked} 
+                readOnly
+                style={{ marginTop: 4, cursor: 'pointer' }}
+              />
+              <span style={{ textDecoration: isChecked ? 'line-through' : 'none', opacity: isChecked ? 0.6 : 1, cursor: 'pointer', flex: 1 }}>
+                {text}
+              </span>
+            </div>
+          );
+        }
+        
+        return <div key={i} style={{ minHeight: '1.2em' }}>{line}</div>;
+      })}
+    </div>
+  );
+}
+
 function NoteCard({ note, onUpdate, onDelete, onPin }) {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ title: note.title || '', content: note.content || '' });
@@ -134,11 +185,9 @@ function NoteCard({ note, onUpdate, onDelete, onPin }) {
             </div>
           </div>
         ) : (
-          <div>
-            {note.title && <h4 style={{ marginBottom: 'var(--space-2)', fontSize: '1rem' }}>{note.title}</h4>}
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', whiteSpace: 'pre-wrap', lineHeight: 1.5, margin: 0 }}>
-              {note.content || <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Nota vacía</span>}
-            </p>
+          <div style={{ width: '100%', overflow: 'hidden' }}>
+            {note.title && <h4 style={{ marginBottom: 'var(--space-2)', fontSize: '1rem', wordBreak: 'break-word' }}>{note.title}</h4>}
+            <NoteContentDisplay note={note} onUpdate={onUpdate} />
             <div style={{ marginTop: 'var(--space-3)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
               {note.creator_name} · {formatRelativeTime(note.updated_at)}
             </div>

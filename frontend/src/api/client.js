@@ -46,6 +46,7 @@ export const api = {
     join: (invite_code) => request('/api/groups/join', { method: 'POST', body: JSON.stringify({ invite_code }) }),
     leave: (id) => request(`/api/groups/${id}/leave`, { method: 'POST' }),
     regenerateInvite: (id) => request(`/api/groups/${id}/invite/regenerate`, { method: 'POST' }),
+    inviteByEmail: (id, email) => request(`/api/groups/${id}/invite/email`, { method: 'POST', body: JSON.stringify({ email }) }),
   },
 
   // Expenses

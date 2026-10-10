@@ -14,6 +14,9 @@ export function GroupPage() {
   const [showDelete, setShowDelete] = useState(false);
   const [deletingGroup, setDeletingGroup] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [emailInvite, setEmailInvite] = useState('');
+  const [inviting, setInviting] = useState(false);
+  const { inviteByEmail } = useGroupStore();
 
   useEffect(() => {
     setLoading(true);
@@ -28,6 +31,22 @@ export function GroupPage() {
     await navigator.clipboard.writeText(inviteLink);
     setCopiedCode(true);
     setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  const handleInviteEmail = async (e) => {
+    e.preventDefault();
+    if (!emailInvite.trim()) return;
+    setInviting(true);
+    try {
+      await inviteByEmail(groupId, emailInvite);
+      toast.success('Persona añadida al grupo');
+      setEmailInvite('');
+      setShowInvite(false);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setInviting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -152,37 +171,52 @@ export function GroupPage() {
       </div>
 
       {/* Invite Modal */}
-      <Modal open={showInvite} onClose={() => setShowInvite(false)} title="Invitar al grupo">
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ marginBottom: 'var(--space-5)' }}>
-            Comparte este código o enlace con quien quieras invitar:
-          </p>
-
-          <div style={{
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-5)',
-            marginBottom: 'var(--space-5)',
-          }}>
-            <div style={{
-              fontSize: '2.5rem',
-              fontWeight: 800,
-              letterSpacing: '0.2em',
-              color: 'var(--primary-light)',
-              marginBottom: 'var(--space-2)',
-            }}>
-              {group.invite_code}
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              Código de invitación
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-            <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleCopyCode}>
-              {copiedCode ? '✓ Copiado' : '📋 Copiar enlace'}
+      <Modal open={showInvite} onClose={() => setShowInvite(false)} title="Añadir al grupo">
+        <div>
+          <form onSubmit={handleInviteEmail} style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-6)' }}>
+            <input 
+              type="email" 
+              placeholder="Añadir por email..." 
+              value={emailInvite} 
+              onChange={e => setEmailInvite(e.target.value)}
+              style={{ flex: 1, padding: 'var(--space-3)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--bg-elevated)', color: 'var(--text-primary)' }}
+            />
+            <button className="btn btn-primary" type="submit" disabled={inviting}>
+              {inviting ? <Spinner size={16} /> : 'Añadir'}
             </button>
+          </form>
+
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ marginBottom: 'var(--space-4)', color: 'var(--text-secondary)' }}>
+              O comparte este código o enlace:
+            </p>
+
+            <div style={{
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              padding: 'var(--space-5)',
+              marginBottom: 'var(--space-5)',
+            }}>
+              <div style={{
+                fontSize: '2.5rem',
+                fontWeight: 800,
+                letterSpacing: '0.2em',
+                color: 'var(--primary-light)',
+                marginBottom: 'var(--space-2)',
+              }}>
+                {group.invite_code}
+              </div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                Código de invitación
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+              <button className="btn btn-ghost" style={{ flex: 1, background: 'var(--bg-elevated)' }} onClick={handleCopyCode}>
+                {copiedCode ? '✓ Copiado' : '📋 Copiar enlace'}
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

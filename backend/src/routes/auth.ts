@@ -64,17 +64,17 @@ auth.get('/google/callback', async (c) => {
       sub: string; email: string; name: string; picture: string;
     };
 
-    // Upsert user in DB
+    // Upsert user in DB by email
     const existingUser = await c.env.DB.prepare(
-      'SELECT * FROM users WHERE provider = ? AND provider_id = ?'
-    ).bind('google', googleUser.sub).first<User>();
+      'SELECT * FROM users WHERE email = ?'
+    ).bind(googleUser.email).first<User>();
 
     let userId: string;
     if (existingUser) {
-      // Update user info
+      // Update user info and provider if it was pending (or just update name/avatar)
       await c.env.DB.prepare(
-        'UPDATE users SET name = ?, avatar_url = ? WHERE id = ?'
-      ).bind(googleUser.name, googleUser.picture, existingUser.id).run();
+        'UPDATE users SET name = ?, avatar_url = ?, provider = ?, provider_id = ? WHERE id = ?'
+      ).bind(googleUser.name, googleUser.picture, 'google', googleUser.sub, existingUser.id).run();
       userId = existingUser.id;
     } else {
       // Create new user

@@ -93,6 +93,14 @@ export const useGroupStore = create((set, get) => ({
     }));
     return group;
   },
+
+  inviteByEmail: async (groupId, email) => {
+    const { user } = await api.groups.inviteByEmail(groupId, email);
+    // Optionally fetch members again to update the store
+    const { members } = await api.groups.get(groupId);
+    set({ members });
+    return user;
+  },
 }));
 
 // ---- Expenses Store ----
