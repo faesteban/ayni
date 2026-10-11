@@ -214,7 +214,7 @@ export function GroupsPage() {
               boxShadow: 'var(--shadow-md)',
             }}>
               <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--border)' }}>
-                <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user?.name}</div>
+                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{user?.name}</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user?.email}</div>
               </div>
               <button
@@ -261,7 +261,7 @@ export function GroupsPage() {
         >
           <span style={{ fontSize: '1.5rem' }}>🔔</span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Activa las notificaciones</div>
+            <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>Activa las notificaciones</div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
               Para saber de gastos nuevos y tareas pendientes
             </div>
@@ -301,16 +301,21 @@ export function GroupsPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
           {groups.map(group => (
-            <button
+            <div
               key={group.id}
               className="card card-clickable"
-              style={{ textAlign: 'left', width: '100%' }}
+              style={{ textAlign: 'left', width: '100%', color: 'var(--text-primary)', cursor: 'pointer' }}
               onClick={() => navigate(`/groups/${group.id}`)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/groups/${group.id}`); }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
                 <GroupAvatar group={group} size="md" />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '1rem' }} className="truncate">{group.name}</div>
+                  <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }} className="truncate">
+                    {group.name}
+                  </div>
                   {group.description && (
                     <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }} className="truncate">
                       {group.description}
@@ -322,7 +327,7 @@ export function GroupsPage() {
                 </div>
                 <span style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>›</span>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       )}

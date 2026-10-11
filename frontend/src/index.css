@@ -6,7 +6,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* ---- CSS Custom Properties ---- */
-:root {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
 
   /* Colors */
@@ -30,10 +31,10 @@
   --accent-blue: #4dabf7;
   --accent-pink: #f783ac;
 
-  /* Text */
-  --text-primary: #e8e8f0;
-  --text-secondary: #9090a8;
-  --text-muted: #5a5a72;
+  /* Text - High-contrast crisp text on dark backgrounds */
+  --text-primary: #f5f5fb;
+  --text-secondary: #9fa2bf;
+  --text-muted: #6b6e8a;
   --text-inverse: #0a0a0f;
 
   /* Borders */
@@ -656,6 +657,7 @@ p { color: var(--text-secondary); }
 
 .card-clickable {
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 .card-clickable:hover {
