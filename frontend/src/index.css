@@ -7,6 +7,8 @@
 
 /* ---- CSS Custom Properties ---- */
 :root {
+  color-scheme: dark;
+
   /* Colors */
   --bg-base: #0a0a0f;
   --bg-surface: #12121a;
@@ -78,6 +80,8 @@
 
 /* ---- Light Theme ---- */
 [data-theme="light"] {
+  color-scheme: light;
+
   /* Colors */
   --bg-base: #f4f5fa;
   --bg-surface: #ffffff;
@@ -87,38 +91,39 @@
   --bg-glass-hover: rgba(255, 255, 255, 0.95);
 
   /* Brand */
-  --primary: #635bff;
-  --primary-light: #7a73ff;
-  --primary-dark: #4d44e5;
-  --primary-glow: rgba(99, 91, 255, 0.22);
+  --primary: #5c52e6;
+  --primary-light: #4338ca;
+  --primary-dark: #3730a3;
+  --primary-glow: rgba(92, 82, 230, 0.22);
 
   /* Accents */
-  --accent-green: #059669;
+  --accent-green: #047857;
   --accent-red: #e11d48;
   --accent-orange: #d97706;
-  --accent-blue: #2563eb;
+  --accent-blue: #1d4ed8;
   --accent-pink: #db2777;
 
-  /* Text */
-  --text-primary: #151628;
-  --text-secondary: #535770;
-  --text-muted: #8589a3;
+  /* Text - High contrast, perfectly legible */
+  --text-primary: #0f111e;
+  --text-secondary: #474b66;
+  --text-muted: #6e7391;
   --text-inverse: #ffffff;
 
   /* Borders */
-  --border: rgba(21, 22, 40, 0.09);
-  --border-focus: rgba(99, 91, 255, 0.45);
+  --border: rgba(15, 17, 30, 0.10);
+  --border-focus: rgba(92, 82, 230, 0.5);
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(21, 22, 40, 0.04);
-  --shadow-md: 0 6px 20px rgba(21, 22, 40, 0.07);
-  --shadow-lg: 0 12px 36px rgba(21, 22, 40, 0.1);
+  --shadow-sm: 0 2px 8px rgba(15, 17, 30, 0.05);
+  --shadow-md: 0 6px 20px rgba(15, 17, 30, 0.08);
+  --shadow-lg: 0 12px 36px rgba(15, 17, 30, 0.12);
   --shadow-glow: 0 0 25px var(--primary-glow);
 }
 
 [data-theme="light"] .modal {
   background: #ffffff;
-  box-shadow: 0 20px 50px rgba(21, 22, 40, 0.15);
+  color: var(--text-primary);
+  box-shadow: 0 20px 50px rgba(15, 17, 30, 0.15);
 }
 
 [data-theme="light"] .modal-overlay {
@@ -133,15 +138,15 @@
 [data-theme="light"] .card:hover,
 [data-theme="light"] .glass-card:hover {
   box-shadow: var(--shadow-md);
-  border-color: rgba(99, 91, 255, 0.35);
+  border-color: rgba(92, 82, 230, 0.35);
 }
 
 [data-theme="light"] .btn-ghost {
-  background: rgba(21, 22, 40, 0.04);
+  background: rgba(15, 17, 30, 0.04);
 }
 
 [data-theme="light"] .btn-ghost:hover:not(:disabled) {
-  background: rgba(21, 22, 40, 0.08);
+  background: rgba(15, 17, 30, 0.08);
 }
 
 /* ---- Reset & Base ---- */
@@ -185,11 +190,18 @@ button {
   font-family: var(--font);
   border: none;
   background: none;
+  color: var(--text-primary);
 }
 
 input, textarea, select {
   font-family: var(--font);
   font-size: inherit;
+  color: var(--text-primary);
+}
+
+option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
 }
 
 img { display: block; max-width: 100%; }
@@ -201,6 +213,10 @@ img { display: block; max-width: 100%; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* ---- Typography ---- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
 h1 { font-size: 2rem; font-weight: 800; line-height: 1.2; }
 h2 { font-size: 1.5rem; font-weight: 700; }
 h3 { font-size: 1.25rem; font-weight: 600; }
@@ -217,6 +233,7 @@ p { color: var(--text-secondary); }
 
 .glass-card {
   background: var(--bg-surface);
+  color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
@@ -411,6 +428,13 @@ p { color: var(--text-secondary); }
 .badge-warning { background: rgba(255, 169, 77, 0.2); color: var(--accent-orange); }
 .badge-info { background: rgba(77, 171, 247, 0.2); color: var(--accent-blue); }
 .badge-neutral { background: rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
+
+[data-theme="light"] .badge-primary { background: rgba(92, 82, 230, 0.12); color: #4338ca; }
+[data-theme="light"] .badge-success { background: rgba(4, 120, 87, 0.12); color: #047857; }
+[data-theme="light"] .badge-danger { background: rgba(225, 29, 72, 0.12); color: #be123c; }
+[data-theme="light"] .badge-warning { background: rgba(217, 119, 6, 0.14); color: #b45309; }
+[data-theme="light"] .badge-info { background: rgba(29, 78, 216, 0.12); color: #1d4ed8; }
+[data-theme="light"] .badge-neutral { background: rgba(15, 17, 30, 0.06); color: #474b66; }
 
 /* ---- Avatar ---- */
 .avatar {
@@ -619,6 +643,7 @@ p { color: var(--text-secondary); }
 /* ---- Cards ---- */
 .card {
   background: var(--bg-surface);
+  color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);

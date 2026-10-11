@@ -1,22 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useNoteStore, useGroupStore, useToastStore } from '../store';
+import { useNoteStore, useGroupStore, useToastStore, useThemeStore } from '../store';
 import { EmptyState, Spinner, ConfirmModal, formatRelativeTime } from '../components/common';
 import { ThemeToggle } from '../components/ThemeToggle';
-
-const NOTE_COLORS = [
-  { value: '#1e1e2e', label: 'Default' },
-  { value: '#1a2a1a', label: 'Verde' },
-  { value: '#2a1a1a', label: 'Rojo' },
-  { value: '#1a1a2a', label: 'Azul' },
-  { value: '#2a2a1a', label: 'Amarillo' },
-  { value: '#2a1a2a', label: 'Morado' },
-  { value: '#1a2a2a', label: 'Turquesa' },
-];
-
-const NOTE_COLORS_DISPLAY = [
-  '#1e1e2e', '#1f3320', '#2d1515', '#0f1d3d', '#2d2800', '#2a1040', '#0d2b2b',
-];
+import { NOTE_COLOR_PRESETS, getNoteCardStyle } from '../utils/themeNotes';
 
 function NoteContentDisplay({ note, onUpdate }) {
   const content = note.content || '';
@@ -70,6 +57,10 @@ function NoteContentDisplay({ note, onUpdate }) {
 }
 
 function NoteCard({ note, onUpdate, onDelete, onPin }) {
+  const { theme } = useThemeStore();
+  const isLight = theme === 'light';
+  const noteStyle = getNoteCardStyle(note.color, isLight);
+
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ title: note.title || '', content: note.content || '' });
   const [saving, setSaving] = useState(false);
@@ -98,8 +89,8 @@ function NoteCard({ note, onUpdate, onDelete, onPin }) {
     <>
       <div
         style={{
-          background: (!note.color || note.color === '#1e1e2e') ? 'var(--bg-surface)' : note.color,
-          border: `1px solid ${note.pinned ? 'var(--primary)' : 'var(--border)'}`,
+          background: noteStyle.background,
+          border: note.pinned ? '1px solid var(--primary)' : noteStyle.border,
           borderRadius: 'var(--radius-lg)',
           boxShadow: 'var(--shadow-sm)',
           padding: 'var(--space-4)',
@@ -141,18 +132,26 @@ function NoteCard({ note, onUpdate, onDelete, onPin }) {
             />
 
             {/* Color picker */}
-            <div style={{ display: 'flex', gap: 6, marginTop: 'var(--space-3)', marginBottom: 'var(--space-3)' }}>
-              {NOTE_COLORS_DISPLAY.map(color => (
-                <button
-                  key={color}
-                  onClick={(e) => { e.stopPropagation(); handleColorChange(color); }}
-                  style={{
-                    width: 20, height: 20, borderRadius: '50%', background: color,
-                    border: note.color === color ? '2px solid white' : '2px solid rgba(255,255,255,0.2)',
-                    cursor: 'pointer', flexShrink: 0,
-                  }}
-                />
-              ))}
+            <div style={{ display: 'flex', gap: 6, marginTop: 'var(--space-3)', marginBottom: 'var(--space-3)', flexWrap: 'wrap' }}>
+              {NOTE_COLOR_PRESETS.map(preset => {
+                const isSelected = (!note.color && preset.id === 'default') || note.color === preset.id || note.color === preset.dark || note.color === preset.light;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleColorChange(preset.id); }}
+                    title={preset.label}
+                    style={{
+                      width: 22, height: 22, borderRadius: '50%',
+                      background: isLight ? preset.light : preset.dark,
+                      border: isSelected ? '2px solid var(--primary)' : `1px solid ${isLight ? preset.borderLight : preset.borderDark}`,
+                      cursor: 'pointer', flexShrink: 0,
+                      transform: isSelected ? 'scale(1.15)' : 'scale(1)',
+                      transition: 'transform var(--transition-fast)',
+                    }}
+                  />
+                );
+              })}
             </div>
 
             <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
@@ -252,10 +251,11 @@ function NewNoteCard({ onSave }) {
 
   return (
     <div style={{
-      background: '#1a1a2e',
-      border: '1px solid rgba(108,99,255,0.4)',
+      background: 'var(--bg-surface)',
+      border: '1px solid var(--border-focus)',
       borderRadius: 'var(--radius-lg)',
       padding: 'var(--space-4)',
+      boxShadow: 'var(--shadow-md)',
     }}>
       <input
         value={form.title}

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGroupStore, useAuthStore, useToastStore, useExpenseStore, useNoteStore, useTaskStore } from '../store';
+import { useGroupStore, useAuthStore, useToastStore, useExpenseStore, useNoteStore, useTaskStore, useThemeStore } from '../store';
 import { Avatar, GroupAvatar, Spinner, EmptyState, Modal, ConfirmModal, formatCurrency, formatDate, formatRelativeTime } from '../components/common';
 import { EditGroupModal } from '../components/EditGroupModal';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { getNoteCardStyle } from '../utils/themeNotes';
 
 const CATEGORY_COLORS = {
   general: '#6c63ff',
@@ -38,6 +39,8 @@ export function GroupPage() {
   const { tasks, fetchTasks } = useTaskStore();
   const { user } = useAuthStore();
   const toast = useToastStore();
+  const { theme } = useThemeStore();
+  const isLight = theme === 'light';
 
   const [loading, setLoading] = useState(true);
   const [showEdit, setShowEdit] = useState(false);
@@ -386,17 +389,19 @@ export function GroupPage() {
             </div>
           </div>
 
-          {latestNote ? (
-            <div style={{
-              background: (!latestNote.color || latestNote.color === '#1e1e2e') ? 'var(--bg-elevated)' : latestNote.color,
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-4)',
-              border: `1px solid ${latestNote.pinned ? 'var(--primary)' : 'var(--border)'}`,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
-                <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
-                  {latestNote.pinned ? '📌 ' : ''}{latestNote.title || 'Última nota'}
-                </span>
+          {latestNote ? (() => {
+            const noteStyle = getNoteCardStyle(latestNote.color, isLight);
+            return (
+              <div style={{
+                background: noteStyle.background,
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-4)',
+                border: latestNote.pinned ? '1px solid var(--primary)' : noteStyle.border,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                    {latestNote.pinned ? '📌 ' : ''}{latestNote.title || 'Última nota'}
+                  </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   {formatRelativeTime(latestNote.updated_at)}
                 </span>
@@ -435,8 +440,9 @@ export function GroupPage() {
                 <span>✍️ {latestNote.creator_name ? `Por ${latestNote.creator_name}` : 'Nota compartida'}</span>
                 <span style={{ color: 'var(--primary-light)', fontWeight: 600 }}>Toca para ver o editar ›</span>
               </div>
-            </div>
-          ) : (
+              </div>
+            );
+          })() : (
             <div style={{
               background: 'var(--bg-elevated)',
               borderRadius: 'var(--radius-md)',
