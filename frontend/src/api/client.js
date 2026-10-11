@@ -40,6 +40,7 @@ export const api = {
   // Groups
   groups: {
     list: () => request('/api/groups'),
+    overview: () => request('/api/groups/overview'),
     get: (id) => request(`/api/groups/${id}`),
     create: (data) => request('/api/groups', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/api/groups/${id}`, { method: 'PUT', body: JSON.stringify(data) }),

@@ -1,8 +1,102 @@
 import { Hono } from 'hono';
 import { Env, Group, GroupMember, User } from '../types';
 import { getAuthUser, generateId, generateInviteCode } from '../middleware/auth';
+import { calculateGroupDebts } from './expenses';
 
 const groups = new Hono<{ Bindings: Env }>();
+
+// Get dashboard overview across all groups for user
+groups.get('/overview', async (c) => {
+  const user = await getAuthUser(c);
+  if (!user) return c.json({ error: 'Unauthorized' }, 401);
+
+  // 1. Get user groups
+  const groupsResult = await c.env.DB.prepare(`
+    SELECT g.*, gm.role, gm.joined_at,
+      (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count
+    FROM groups g
+    JOIN group_members gm ON g.id = gm.group_id
+    WHERE gm.user_id = ?
+    ORDER BY gm.joined_at DESC
+  `).bind(user.id).all<Group & { role: string; member_count: number }>();
+
+  const userGroups = groupsResult.results;
+
+  // 2. Debts and balances across all groups
+  let totalOwedToMe = 0;
+  let totalIOwe = 0;
+  const debtsOwedToMe: { from_user: User; group_id: string; group_name: string; currency: string; amount: number }[] = [];
+  const debtsIOwe: { to_user: User; group_id: string; group_name: string; currency: string; amount: number }[] = [];
+
+  for (const grp of userGroups) {
+    try {
+      const { debts } = await calculateGroupDebts(c.env.DB, grp.id);
+      for (const d of debts) {
+        if (d.to.id === user.id) {
+          totalOwedToMe += d.amount;
+          debtsOwedToMe.push({
+            from_user: d.from,
+            group_id: grp.id,
+            group_name: grp.name,
+            currency: grp.currency,
+            amount: d.amount,
+          });
+        } else if (d.from.id === user.id) {
+          totalIOwe += d.amount;
+          debtsIOwe.push({
+            to_user: d.to,
+            group_id: grp.id,
+            group_name: grp.name,
+            currency: grp.currency,
+            amount: d.amount,
+          });
+        }
+      }
+    } catch (err) {
+      console.error(`Error calculating debts for group ${grp.id}:`, err);
+    }
+  }
+
+  // 3. User's pending / active tasks across all groups
+  const tasksResult = await c.env.DB.prepare(`
+    SELECT t.*, g.name as group_name, g.emoji as group_emoji, u.name as assigned_name, u.avatar_url as assigned_avatar
+    FROM tasks t
+    JOIN groups g ON t.group_id = g.id
+    LEFT JOIN users u ON t.assigned_to = u.id
+    WHERE t.status != 'done'
+      AND (t.assigned_to = ? OR t.assigned_to IS NULL)
+      AND t.group_id IN (SELECT group_id FROM group_members WHERE user_id = ?)
+    ORDER BY
+      CASE WHEN t.due_date IS NULL THEN 1 ELSE 0 END,
+      t.due_date ASC,
+      t.created_at DESC
+    LIMIT 6
+  `).bind(user.id, user.id).all();
+
+  // 4. Recent notes across all groups
+  const notesResult = await c.env.DB.prepare(`
+    SELECT n.*, g.name as group_name, g.emoji as group_emoji, u.name as creator_name
+    FROM notes n
+    JOIN groups g ON n.group_id = g.id
+    LEFT JOIN users u ON n.created_by = u.id
+    WHERE n.group_id IN (SELECT group_id FROM group_members WHERE user_id = ?)
+    ORDER BY n.updated_at DESC
+    LIMIT 6
+  `).bind(user.id).all();
+
+  return c.json({
+    summary: {
+      total_owed_to_me: Math.round(totalOwedToMe * 100) / 100,
+      total_i_owe: Math.round(totalIOwe * 100) / 100,
+      net_balance: Math.round((totalOwedToMe - totalIOwe) * 100) / 100,
+      debts_owed_to_me: debtsOwedToMe,
+      debts_i_owe: debtsIOwe,
+    },
+    tasks: tasksResult.results,
+    notes: notesResult.results,
+    groups: userGroups,
+  });
+});
 
 // Get all groups for current user
 groups.get('/', async (c) => {

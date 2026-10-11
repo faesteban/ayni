@@ -225,7 +225,7 @@ export async function handleCron(env: Env) {
       AND t.due_date IS NOT NULL
       AND date(t.due_date) < date('now')
       AND t.assigned_to IS NOT NULL
-  `).all<{ id: string; title: string; due_date: string; assigned_to: string; group_name: string }>();
+  `).all<{ id: string; title: string; due_date: string; group_id: string; assigned_to: string; group_name: string }>();
 
   for (const task of overdueTasks.results) {
     const daysOverdue = Math.floor((now.getTime() - new Date(task.due_date).getTime()) / 86400000);

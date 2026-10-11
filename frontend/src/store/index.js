@@ -43,6 +43,24 @@ export const useGroupStore = create((set, get) => ({
   members: [],
   myRole: null,
   loading: false,
+  overview: null,
+  overviewLoading: false,
+
+  fetchOverview: async () => {
+    set({ overviewLoading: true });
+    try {
+      const data = await api.groups.overview();
+      set({
+        overview: data,
+        groups: data.groups || [],
+        overviewLoading: false,
+      });
+      return data;
+    } catch (err) {
+      set({ overviewLoading: false });
+      throw err;
+    }
+  },
 
   fetchGroups: async () => {
     set({ loading: true });

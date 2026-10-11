@@ -191,18 +191,10 @@ expenses.delete('/groups/:groupId/expenses/:id', async (c) => {
   return c.json({ success: true });
 });
 
-// Get balances for a group
-expenses.get('/groups/:groupId/balances', async (c) => {
-  const user = await getAuthUser(c);
-  if (!user) return c.json({ error: 'Unauthorized' }, 401);
-
-  const groupId = c.req.param('groupId');
-  if (!await checkMembership(c.env.DB, groupId, user.id)) {
-    return c.json({ error: 'Access denied' }, 403);
-  }
-
+// Helper: calculate balances and debts for a group
+export async function calculateGroupDebts(db: D1Database, groupId: string) {
   // Get all members
-  const membersResult = await c.env.DB.prepare(`
+  const membersResult = await db.prepare(`
     SELECT u.id, u.name, u.email, u.avatar_url
     FROM group_members gm
     JOIN users u ON gm.user_id = u.id
@@ -212,7 +204,7 @@ expenses.get('/groups/:groupId/balances', async (c) => {
   const members = membersResult.results;
 
   // Get all unsettled expenses with splits
-  const splitsResult = await c.env.DB.prepare(`
+  const splitsResult = await db.prepare(`
     SELECT e.paid_by, es.user_id, es.amount_owed
     FROM expense_splits es
     JOIN expenses e ON es.expense_id = e.id
@@ -220,7 +212,7 @@ expenses.get('/groups/:groupId/balances', async (c) => {
   `).bind(groupId).all<{ paid_by: string; user_id: string; amount_owed: number }>();
 
   // Get payments
-  const paymentsResult = await c.env.DB.prepare(`
+  const paymentsResult = await db.prepare(`
     SELECT from_user, to_user, amount FROM payments WHERE group_id = ?
   `).bind(groupId).all<{ from_user: string; to_user: string; amount: number }>();
 
@@ -275,7 +267,21 @@ expenses.get('/groups/:groupId/balances', async (c) => {
     balance: Math.round((balances[m.id] || 0) * 100) / 100,
   }));
 
-  return c.json({ balances: memberBalances, debts });
+  return { balances: memberBalances, debts };
+}
+
+// Get balances for a group
+expenses.get('/groups/:groupId/balances', async (c) => {
+  const user = await getAuthUser(c);
+  if (!user) return c.json({ error: 'Unauthorized' }, 401);
+
+  const groupId = c.req.param('groupId');
+  if (!await checkMembership(c.env.DB, groupId, user.id)) {
+    return c.json({ error: 'Access denied' }, 403);
+  }
+
+  const result = await calculateGroupDebts(c.env.DB, groupId);
+  return c.json(result);
 });
 
 // Register a payment
