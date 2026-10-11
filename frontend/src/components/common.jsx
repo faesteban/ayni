@@ -66,10 +66,10 @@ export function Avatar({ user, size = 'default', className = '' }) {
 export function GroupAvatar({ group, size = 'md', className = '', style = {} }) {
   const [hasError, setHasError] = useState(false);
   const sizeMap = {
-    sm: { size: 36, fontSize: '1.2rem', radius: 'var(--radius-sm)' },
-    md: { size: 52, fontSize: '1.6rem', radius: 'var(--radius-md)' },
-    lg: { size: 68, fontSize: '2rem', radius: 'var(--radius-lg)' },
-    xl: { size: 88, fontSize: '2.5rem', radius: 'var(--radius-xl)' },
+    sm: { size: 38, fontSize: '1.25rem', radius: '12px' },
+    md: { size: 56, fontSize: '1.75rem', radius: '18px' },
+    lg: { size: 76, fontSize: '2.3rem', radius: '24px' },
+    xl: { size: 96, fontSize: '2.8rem', radius: '30px' },
   };
   const { size: dim, fontSize, radius } = sizeMap[size] || sizeMap.md;
 
@@ -85,7 +85,8 @@ export function GroupAvatar({ group, size = 'md', className = '', style = {} }) 
           height: dim,
           borderRadius: radius,
           objectFit: 'cover',
-          border: '1px solid var(--border)',
+          border: '1.5px solid var(--border)',
+          boxShadow: 'var(--shadow-sm)',
           flexShrink: 0,
           ...style,
         }}
@@ -100,8 +101,9 @@ export function GroupAvatar({ group, size = 'md', className = '', style = {} }) 
         width: dim,
         height: dim,
         borderRadius: radius,
-        background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-hover))',
-        border: '1px solid var(--border)',
+        background: 'linear-gradient(135deg, var(--bg-surface), var(--bg-elevated))',
+        border: '1.5px solid var(--border)',
+        boxShadow: 'var(--shadow-sm)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

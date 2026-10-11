@@ -228,47 +228,87 @@ export function GroupsPage() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', position: 'relative' }}>
           <ThemeToggle />
-          <button className="btn btn-ghost btn-icon" onClick={() => setShowMenu(!showMenu)} aria-label="Menú de perfil">
+          <button
+            className="profile-pill"
+            onClick={() => setShowMenu(!showMenu)}
+            aria-label="Menú de perfil"
+          >
             <Avatar user={user} size="sm" />
+            <span className="profile-pill-name">{user?.name?.split(' ')[0]}</span>
+            <span className="profile-pill-chevron" style={{ transform: showMenu ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
           </button>
           {showMenu && (
             <div style={{
-              position: 'absolute', top: '110%', right: 0,
-              background: 'var(--bg-elevated)',
+              position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+              background: 'var(--bg-surface)',
               border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-md)',
-              minWidth: 190,
+              borderRadius: 'var(--radius-xl)',
+              minWidth: 220,
               zIndex: 100,
               overflow: 'hidden',
-              boxShadow: 'var(--shadow-md)',
+              boxShadow: 'var(--shadow-lg)',
+              backdropFilter: 'blur(16px)',
             }}>
-              <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--border)' }}>
-                <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{user?.name}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{user?.email}</div>
+              <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                <Avatar user={user} size="sm" />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }} className="truncate">{user?.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }} className="truncate">{user?.email}</div>
+                </div>
               </div>
-              <button
-                onClick={() => { setShowProfile(true); setShowMenu(false); }}
-                style={{ width: '100%', padding: 'var(--space-3) var(--space-4)', textAlign: 'left', color: 'var(--primary-light)', fontSize: '0.9rem', background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                👤 Mi perfil y foto
-              </button>
-              <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-                <ThemeToggle showLabel style={{ width: '100%', padding: 'var(--space-3) var(--space-4)', border: 'none', background: 'none', color: 'var(--text-primary)', borderRadius: 0 }} />
-              </div>
-              {notifState !== 'granted' && (
+              <div style={{ padding: 'var(--space-2)' }}>
                 <button
-                  onClick={() => { handleEnableNotifications(); setShowMenu(false); }}
-                  style={{ width: '100%', padding: 'var(--space-3) var(--space-4)', textAlign: 'left', color: 'var(--accent-orange)', fontSize: '0.9rem', background: 'none', border: 'none', cursor: 'pointer' }}
+                  onClick={() => { setShowProfile(true); setShowMenu(false); }}
+                  style={{
+                    width: '100%', padding: 'var(--space-3) var(--space-3)', textAlign: 'left',
+                    color: 'var(--text-primary)', fontSize: '0.88rem', fontWeight: 600,
+                    background: 'none', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)',
+                    display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+                    transition: 'background var(--transition-fast)',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
                 >
-                  🔔 Activar notificaciones
+                  <span>👤</span> Mi perfil y foto
                 </button>
-              )}
-              <button
-                onClick={() => { logout(); setShowMenu(false); }}
-                style={{ width: '100%', padding: 'var(--space-3) var(--space-4)', textAlign: 'left', color: 'var(--accent-red)', fontSize: '0.9rem', background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                🚪 Cerrar sesión
-              </button>
+                <ThemeToggle showLabel style={{
+                  width: '100%', padding: 'var(--space-3) var(--space-3)',
+                  border: 'none', background: 'none', color: 'var(--text-primary)',
+                  borderRadius: 'var(--radius-md)', justifyContent: 'flex-start',
+                  fontSize: '0.88rem', fontWeight: 600,
+                }} />
+                {notifState !== 'granted' && (
+                  <button
+                    onClick={() => { handleEnableNotifications(); setShowMenu(false); }}
+                    style={{
+                      width: '100%', padding: 'var(--space-3) var(--space-3)', textAlign: 'left',
+                      color: 'var(--accent-orange)', fontSize: '0.88rem', fontWeight: 600,
+                      background: 'none', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)',
+                      display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+                      transition: 'background var(--transition-fast)',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                  >
+                    <span>🔔</span> Activar notificaciones
+                  </button>
+                )}
+                <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
+                <button
+                  onClick={() => { logout(); setShowMenu(false); }}
+                  style={{
+                    width: '100%', padding: 'var(--space-3) var(--space-3)', textAlign: 'left',
+                    color: 'var(--accent-red)', fontSize: '0.88rem', fontWeight: 600,
+                    background: 'none', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)',
+                    display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+                    transition: 'background var(--transition-fast)',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,107,107,0.1)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                >
+                  <span>🚪</span> Cerrar sesión
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -641,29 +681,46 @@ export function GroupsPage() {
               {displayGroups.map(group => (
                 <div
                   key={group.id}
-                  className="card card-clickable"
-                  style={{ textAlign: 'left', width: '100%', color: 'var(--text-primary)', cursor: 'pointer' }}
+                  className="group-card"
                   onClick={() => navigate(`/groups/${group.id}`)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/groups/${group.id}`); }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                    <GroupAvatar group={group} size="md" />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }} className="truncate">
+                  <GroupAvatar group={group} size="md" />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }} className="truncate">
                         {group.name}
-                      </div>
-                      {group.description && (
-                        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }} className="truncate">
-                          {group.description}
-                        </div>
-                      )}
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                        👥 {group.member_count} miembro{group.member_count !== 1 ? 's' : ''} · {group.role === 'admin' ? 'Admin' : 'Miembro'}
-                      </div>
+                      </span>
                     </div>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>›</span>
+                    {group.description && (
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 2 }} className="truncate">
+                        {group.description}
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-2)', flexWrap: 'wrap' }}>
+                      <span className="group-chip">
+                        👥 {group.member_count} {group.member_count === 1 ? 'miembro' : 'miembros'}
+                      </span>
+                      {group.role === 'admin' ? (
+                        <span className="badge badge-primary" style={{ fontSize: '0.72rem' }}>
+                          👑 Admin
+                        </span>
+                      ) : (
+                        <span className="group-chip" style={{ fontSize: '0.72rem' }}>
+                          Miembro
+                        </span>
+                      )}
+                      {group.currency && (
+                        <span className="group-chip" style={{ fontSize: '0.72rem' }}>
+                          {group.currency}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="action-chevron-circle" aria-hidden="true">
+                    ›
                   </div>
                 </div>
               ))}

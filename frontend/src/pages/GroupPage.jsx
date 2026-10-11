@@ -204,7 +204,7 @@ export function GroupPage() {
               <span className="badge badge-success" style={{ fontSize: '0.8rem', padding: '3px 10px' }}>
                 {formatCurrency(monthlyTotal, group.currency)} este mes
               </span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '1.3rem' }}>›</span>
+              <div className="action-chevron-circle" aria-hidden="true">›</div>
             </div>
           </div>
 
@@ -385,7 +385,7 @@ export function GroupPage() {
               <span className="badge badge-info" style={{ fontSize: '0.8rem', padding: '3px 10px' }}>
                 {notes.length} {notes.length === 1 ? 'nota' : 'notas'}
               </span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '1.3rem' }}>›</span>
+              <div className="action-chevron-circle" aria-hidden="true">›</div>
             </div>
           </div>
 
@@ -483,7 +483,7 @@ export function GroupPage() {
               <span className={`badge ${pendingTasks.length > 0 ? 'badge-warning' : 'badge-success'}`} style={{ fontSize: '0.8rem', padding: '3px 10px' }}>
                 {pendingTasks.length > 0 ? `${pendingTasks.length} pendientes` : 'Todo al día ✓'}
               </span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '1.3rem' }}>›</span>
+              <div className="action-chevron-circle" aria-hidden="true">›</div>
             </div>
           </div>
 
@@ -572,17 +572,19 @@ export function GroupPage() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           {members.map(member => (
-            <div key={member.user_id} className="glass-card" style={{ padding: 'var(--space-3) var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <div key={member.user_id} className="card" style={{ padding: 'var(--space-3) var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', borderRadius: 'var(--radius-lg)' }}>
               <Avatar user={{ name: member.name, avatar_url: member.avatar_url }} size="default" />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }} className="truncate">
                   {member.name}
                   {member.user_id === user?.id && ' (tú)'}
                 </div>
-                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{member.email}</div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }} className="truncate">{member.email}</div>
               </div>
-              {member.role === 'admin' && (
-                <span className="badge badge-primary">Admin</span>
+              {member.role === 'admin' ? (
+                <span className="badge badge-primary">👑 Admin</span>
+              ) : (
+                <span className="group-chip">Miembro</span>
               )}
             </div>
           ))}

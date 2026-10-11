@@ -58,11 +58,13 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  /* Border Radius - Modern Squircle Android Curves */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-2xl: 36px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -232,17 +234,38 @@ p { color: var(--text-secondary); }
   border: 1px solid var(--border);
 }
 
+.card,
 .glass-card {
   background: var(--bg-surface);
   color: var(--text-primary);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  position: relative;
 }
 
+.card:hover,
 .glass-card:hover {
-  border-color: rgba(108, 99, 255, 0.3);
+  border-color: rgba(108, 99, 255, 0.25);
   box-shadow: var(--shadow-md);
+}
+
+.card-clickable {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.card-clickable:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-clickable:active {
+  transform: scale(0.985);
 }
 
 .gradient-text {
@@ -439,23 +462,162 @@ p { color: var(--text-secondary); }
 
 /* ---- Avatar ---- */
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-full);
   object-fit: cover;
   background: linear-gradient(135deg, var(--primary), var(--accent-pink));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: white;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1.5px var(--border), 0 3px 10px rgba(0, 0, 0, 0.2);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.avatar-sm { width: 30px; height: 30px; font-size: 0.72rem; }
+.avatar-lg { width: 54px; height: 54px; font-size: 1.15rem; }
+.avatar-xl { width: 76px; height: 76px; font-size: 1.5rem; box-shadow: 0 0 0 2.5px var(--border-focus), 0 8px 24px rgba(0, 0, 0, 0.35); }
+
+/* Android Style Profile Pill in Header */
+.profile-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 12px 4px 5px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.profile-pill:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-focus);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.profile-pill:active {
+  transform: scale(0.97);
+}
+
+.profile-pill-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-pill-chevron {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+  line-height: 1;
+}
+
+/* Modern Android Squircle Group Card */
+.group-card {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.group-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.group-card:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.group-card:hover::before {
+  opacity: 1;
+}
+
+.group-card:active {
+  transform: scale(0.985);
+}
+
+.group-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Action Circle / Chevron */
+.action-chevron-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  transition: all var(--transition-fast);
   flex-shrink: 0;
 }
 
-.avatar-sm { width: 28px; height: 28px; font-size: 0.7rem; }
-.avatar-lg { width: 48px; height: 48px; font-size: 1rem; }
-.avatar-xl { width: 64px; height: 64px; font-size: 1.3rem; }
+.group-card:hover .action-chevron-circle,
+.card-clickable:hover .action-chevron-circle {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  transform: translateX(2px);
+}
+
+/* Group Avatar squircle */
+.group-avatar {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.group-card:hover .group-avatar,
+.card:hover .group-avatar {
+  transform: scale(1.04);
+}
 
 /* ---- Modal ---- */
 .modal-overlay {
@@ -648,21 +810,53 @@ p { color: var(--text-secondary); }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
-  transition: all var(--transition-base);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  position: relative;
 }
 
 .card:hover {
-  border-color: rgba(108, 99, 255, 0.25);
+  border-color: rgba(108, 99, 255, 0.35);
 }
 
 .card-clickable {
   cursor: pointer;
   color: var(--text-primary);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .card-clickable:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  border-color: rgba(108, 99, 255, 0.45);
+}
+
+.card-clickable:active {
+  transform: scale(0.985);
+}
+
+/* Action chevron circle button */
+.action-chevron-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.card:hover .action-chevron-circle {
+  background: var(--primary-glow);
+  color: var(--primary-light);
+  border-color: var(--border-focus);
+  transform: translateX(2px);
 }
 
 /* ---- Chip / Tag ---- */
