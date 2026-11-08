@@ -28,19 +28,26 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Frontend Dependencies & Build
+      - name: Install Frontend Dependencies
         working-directory: frontend
-        run: |
-          npm ci || npm install
-          npm run build
-          npx cap sync android
+        run: npm install
+
+      - name: Build Frontend
+        working-directory: frontend
+        env:
+          VITE_API_URL: https://api.ayni.estebanfa.es
+        run: npm run build
+
+      - name: Sync Capacitor Android
+        working-directory: frontend
+        run: npx cap sync android
 
       - name: Make Gradlew Executable
         run: chmod +x frontend/android/gradlew
 
       - name: Build APK with Gradle
         working-directory: frontend/android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Prepare APK naming
         run: |
