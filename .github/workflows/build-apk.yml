@@ -53,25 +53,19 @@ jobs:
 
       - name: Build APK with Gradle
         working-directory: frontend/android
-        run: |
-          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
-
-      - name: Upload Build Log on Failure
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: frontend/android/build.log
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Prepare APK naming
         run: |
-          cp frontend/android/app/build/outputs/apk/debug/app-debug.apk frontend/android/app/build/outputs/apk/debug/Ayni.apk
+          APK_PATH=$(find frontend/android -name "*.apk" | head -n 1)
+          echo "Found APK at: $APK_PATH"
+          cp "$APK_PATH" Ayni.apk
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Ayni-APK
-          path: frontend/android/app/build/outputs/apk/debug/Ayni.apk
+          path: Ayni.apk
 
       - name: Release APK
         uses: softprops/action-gh-release@v2
@@ -80,6 +74,6 @@ jobs:
           tag_name: latest
           name: "Ayni para Android (Última versión)"
           body: "Descarga directa del APK de Ayni para móviles Android."
-          files: frontend/android/app/build/outputs/apk/debug/Ayni.apk
+          files: Ayni.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
