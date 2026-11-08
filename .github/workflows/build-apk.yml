@@ -53,7 +53,9 @@ jobs:
 
       - name: Build APK with Gradle
         working-directory: frontend/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
 
       - name: Prepare APK naming
         run: |
