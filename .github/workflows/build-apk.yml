@@ -41,15 +41,12 @@ jobs:
           VITE_API_URL: https://api.ayni.estebanfa.es
         run: npm run build
 
-      - name: Copy Web Assets to Android
-        run: |
-          mkdir -p frontend/android/app/src/main/assets/public
-          cp -r frontend/dist/* frontend/android/app/src/main/assets/public/
-          cp frontend/capacitor.config.json frontend/android/app/src/main/assets/capacitor.config.json
-          echo "[]" > frontend/android/app/src/main/assets/capacitor.plugins.json
-
       - name: Make Gradlew Executable
         run: chmod +x frontend/android/gradlew
+
+      - name: Sync Capacitor Android
+        working-directory: frontend
+        run: npx cap sync android
 
       - name: Build APK with Gradle
         working-directory: frontend/android
