@@ -293,6 +293,22 @@ export function GroupsPage() {
                     <span>🔔</span> Activar notificaciones
                   </button>
                 )}
+                <a
+                  href="https://github.com/faesteban/ayni/releases/download/latest/Ayni.apk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: '100%', padding: 'var(--space-3) var(--space-3)', textAlign: 'left',
+                    color: 'var(--primary-light)', fontSize: '0.88rem', fontWeight: 600,
+                    background: 'none', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)',
+                    display: 'flex', alignItems: 'center', gap: 'var(--space-2)',
+                    textDecoration: 'none', transition: 'background var(--transition-fast)',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                >
+                  <span>📱</span> App para Android (APK)
+                </a>
                 <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
                 <button
                   onClick={() => { logout(); setShowMenu(false); }}

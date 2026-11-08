@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAuthStore, useThemeStore } from './store';
 import { Toast, PageLoading } from './components/common';
 import { BottomNav } from './components/BottomNav';
+import { AndroidInstallPrompt } from './components/AndroidInstallPrompt';
 
 // Pages (lazy-like via direct import)
 import { LoginPage } from './pages/LoginPage';
@@ -43,6 +44,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Toast />
+      <AndroidInstallPrompt />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />

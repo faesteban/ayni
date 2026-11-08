@@ -979,3 +979,116 @@ p { color: var(--text-secondary); }
   h1 { font-size: 1.6rem; }
   h2 { font-size: 1.3rem; }
 }
+
+/* ---- Android Install Banner ---- */
+.android-install-banner {
+  position: fixed;
+  bottom: 16px;
+  left: 12px;
+  right: 12px;
+  max-width: 440px;
+  margin: 0 auto;
+  background: rgba(18, 18, 26, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(108, 99, 255, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(108, 99, 255, 0.15);
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideUpInstallBanner 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body:has(.bottom-nav) .android-install-banner {
+  bottom: calc(var(--bottomnav-height, 65px) + 12px);
+}
+
+@keyframes slideUpInstallBanner {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.android-install-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.android-install-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background: #0d0e15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.android-install-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.android-install-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.android-install-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.android-install-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.android-install-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  transition: all var(--transition-fast);
+  line-height: 1;
+}
+
+.android-install-close:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.android-install-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.android-install-btn {
+  flex: 1;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.82rem;
+  padding: 8px 10px;
+  text-decoration: none;
+}
+
