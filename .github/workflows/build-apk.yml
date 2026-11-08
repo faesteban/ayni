@@ -54,8 +54,16 @@ jobs:
       - name: Build APK with Gradle
         working-directory: frontend/android
         run: |
-          set -o pipefail
-          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+          set +e
+          ./gradlew assembleDebug --no-daemon --stacktrace > build.log 2>&1
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
+            while IFS= read -r line; do
+              echo "::error::$line"
+            done < <(tail -n 25 build.log)
+            cat build.log
+            exit $EXIT_CODE
+          fi
 
       - name: Prepare APK naming
         run: |
