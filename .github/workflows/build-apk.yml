@@ -30,7 +30,7 @@ jobs:
 
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm install
+        run: npm install --no-audit
 
       - name: Build Frontend
         working-directory: frontend
@@ -41,9 +41,9 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x frontend/android/gradlew
 
-      - name: Sync Capacitor Android
+      - name: Copy Web Assets to Android
         working-directory: frontend
-        run: npx cap sync android
+        run: npx @capacitor/cli copy android
 
       - name: Build APK with Gradle
         working-directory: frontend/android
