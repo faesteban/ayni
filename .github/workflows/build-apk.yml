@@ -22,11 +22,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Set up Java 17
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Install Frontend Dependencies
         working-directory: frontend
@@ -50,7 +50,7 @@ jobs:
 
       - name: Build APK with Gradle
         working-directory: frontend/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Prepare APK naming
         run: |
