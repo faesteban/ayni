@@ -54,14 +54,14 @@ jobs:
       - name: Build APK with Gradle
         working-directory: frontend/android
         run: |
-          ./gradlew assembleDebug --no-daemon --stacktrace > build.log 2>&1 || {
-            echo "## Gradle Build Error" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 120 build.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            cat build.log
-            exit 1
-          }
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+
+      - name: Upload Build Log on Failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: frontend/android/build.log
 
       - name: Prepare APK naming
         run: |
